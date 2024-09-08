@@ -11,3 +11,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.passcode-digit {
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-right: 0.5rem;
+}
+
+.passcode-input {
+  display: flex;
+  justify-content: center;
+}
+
+.progress-bar {
+  background-color: maroon !important;
+}

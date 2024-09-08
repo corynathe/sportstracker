@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Airtable from 'airtable';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner, faHouseUser, faBasketball } from '@fortawesome/free-solid-svg-icons';
 
 const baseKey = 'appSRWIF4S6lcC2In';
 const apiKey = 'patLKf7QPBQgbLGlG.2859a28a0477c42ad5d58d08daad84a494ebc11bca761441b70051ab5d74867b';
@@ -15,14 +17,16 @@ function App() {
   const [shotCount, setShotCount] = useState(0);
   const [recordId, setRecordId] = useState();
   const [hasChanges, setHasChanges] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     base('Player').select({
         view: 'Grid view'
     }).firstPage(function(err, records) {
         if (err) { console.error(err); return; }
-        console.log('allplayers', records);
         setAllPlayers(records);
+        setLoading(false);
     });
   }, []);
 
@@ -32,9 +36,11 @@ function App() {
   }, []);
 
   const loadPlayerRecord = useCallback((id) => {
+    setLoading(true);
       base('Player').find(id, function(err, record) {
           if (err) { console.error(err); return; }
           setPlayerRecord(record);
+          setLoading(false);
       });
   }, []);
 
@@ -60,6 +66,12 @@ function App() {
         setPlayerData(undefined);
         loadPlayerData(playerRecord.fields['Name']);
     }, [playerRecord]);
+
+    const onReturnHome = useCallback(() => {
+        setPlayerId(undefined);
+        setPlayerRecord(undefined);
+        setPlayerData(undefined);
+    }, []);
 
     const handleStart = useCallback(() => {
         if (recordId) {
@@ -132,6 +144,12 @@ function App() {
 
   return (
     <div className="container mt-5">
+        {loading && (
+            <div className="text-center mt-4">
+                <FontAwesomeIcon icon={faSpinner} pulse size='3x' />
+            </div>
+        )}
+
         {!playerId && allPlayers && (
             <div className="text-center mt-4">
                 <h1 className="text-center">Select Player</h1>
@@ -147,16 +165,22 @@ function App() {
 
       {playerRecord && (
         <>
+            <a href='#' onClick={onReturnHome}>
+                <FontAwesomeIcon icon={faHouseUser} /> Return Home
+            </a>
             <h1 className="text-center">{playerRecord?.fields['Name']}</h1>
-            <div className="text-center mt-4">
-              <h2>Current Total: {playerRecord?.fields['Total']}</h2>
+            <div className="text-center mt-4" style={{color: 'maroon'}}>
+              <FontAwesomeIcon icon={faBasketball} size='2x' style={{paddingRight: '20px', color: 'maroon'}}/>
+              <span style={{fontSize: 30, fontWeight: 'bold'}}>{playerRecord?.fields['Total'].toLocaleString()}</span>
+              <span style={{color: 'black'}}> of {playerRecord?.fields['Goal'].toLocaleString()}</span>
+              <FontAwesomeIcon icon={faBasketball} size='2x' style={{paddingLeft: '20px', color: 'maroon'}}/>
             </div>
         </>
       )}
 
       {playerRecord && !recordId && (
         <div className="text-center mt-4">
-          <button className="btn btn-primary" onClick={handleStart}>Start</button>
+          <button className="btn btn-dark" onClick={handleStart}>Start</button>
         </div>
       )}
       {recordId && (
@@ -165,7 +189,7 @@ function App() {
               <input type="number" className="form-control w-25 text-center" value={shotCount} readOnly />
             </div>
             <div className="mt-4 d-flex justify-content-center align-items-center">
-              <button className="btn btn-danger mx-2" onClick={handleReset}>Reset</button>
+              <button className="btn btn-secondary mx-2" onClick={handleReset}>Reset</button>
               <button className="btn btn-success mx-2" onClick={handleIncrement1}>+1</button>
               <button className="btn btn-success mx-2" onClick={handleIncrement5}>+5</button>
               <button className="btn btn-success mx-2" onClick={handleIncrement10}>+10</button>
@@ -174,12 +198,12 @@ function App() {
       )}
     {recordId && (
       <div className="text-center mt-4">
-        <button className="btn btn-primary" onClick={handleDone}>Done</button>
+        <button className="btn btn-dark" onClick={handleDone}>Done</button>
       </div>
     )}
     {playerData && (
-      <div className="text-center mt-4">
-        <h3>Latest entries:</h3>
+      <div className="text-center mt-4" style={{paddingTop: '50px'}}>
+        <div style={{fontSize: 24}}>Latest entries:</div>
         {playerData?.map(row => (
             <div key={row.id}>
                 <span>{new Date(row.fields['DateTime']).toLocaleDateString()}</span>

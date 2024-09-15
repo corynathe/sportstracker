@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/sportstracker/static/css/main.2ccad8ca.css",
+    "main.css": "/sportstracker/static/css/main.c3714fbf.css",
     "main.js": "/sportstracker/static/js/main.818e07d8.js",
     "index.html": "/sportstracker/index.html",
-    "main.2ccad8ca.css.map": "/sportstracker/static/css/main.2ccad8ca.css.map",
+    "main.c3714fbf.css.map": "/sportstracker/static/css/main.c3714fbf.css.map",
     "main.818e07d8.js.map": "/sportstracker/static/js/main.818e07d8.js.map"
   },
   "entrypoints": [
-    "static/css/main.2ccad8ca.css",
+    "static/css/main.c3714fbf.css",
     "static/js/main.818e07d8.js"
   ]
 }
